@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
+import '../components/boost_status_capsule.dart';
 
 // ============================================================================
 // MAIN SCREEN - Decides between compact and wide layouts
 // ============================================================================
-class MiningScreenLayout extends StatelessWidget {
+class MiningScreenLayout extends StatefulWidget {
   const MiningScreenLayout({super.key});
+
+  @override
+  State<MiningScreenLayout> createState() => _MiningScreenLayoutState();
+}
+
+class _MiningScreenLayoutState extends State<MiningScreenLayout> {
+  // ← Add these state variables (static values for UI-only)
+  bool passiveBoost1Used = false;
+  bool passiveBoost2Used = false;
+  int referralBonus = 0;
+  int passivePremiumPct = 0;
+  int nodulePremiumPct = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -16,13 +29,30 @@ class MiningScreenLayout extends StatelessWidget {
         builder: (context, constraints) {
           final screenWidth = constraints.maxWidth;
 
-          // Layout mode switching: compact for phones, wide for tablets
-          // For now, wide layout mirrors compact to preserve your design
-          if (screenWidth < 600) {
-            return MiningContent(screenWidth: screenWidth, isWideLayout: false);
-          } else {
-            return MiningContent(screenWidth: screenWidth, isWideLayout: true);
-          }
+          // Use Stack to overlay the boost capsule on top of main content
+          return Stack(
+            children: [
+              // Main content (full screen)
+              MiningContent(
+                screenWidth: screenWidth,
+                isWideLayout: screenWidth >= 600,
+              ),
+
+              // Boost capsule positioned on top
+              Positioned(
+                top: 80, // Adjust this to position below AppBar
+                left: 0,
+                right: 0,
+                child: BoostStatusCapsule(
+                  passiveBoost1Used: passiveBoost1Used,
+                  passiveBoost2Used: passiveBoost2Used,
+                  referralBonus: referralBonus,
+                  passivePremiumPct: passivePremiumPct,
+                  nodulePremiumPct: nodulePremiumPct,
+                ),
+              ),
+            ],
+          );
         },
       ),
     );
@@ -94,7 +124,7 @@ class CoinBalance extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            "2,070.80 FOXC",
+            "2 070,80 FOXC",
             style: TextStyle(
               color: Colors.white,
               fontSize: _s(context, 18),
@@ -103,11 +133,8 @@ class CoinBalance extends StatelessWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            "(51.77 €*)",
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: _s(context, 14),
-            ),
+            "(51,77 €*)",
+            style: TextStyle(color: Colors.white, fontSize: _s(context, 16)),
           ),
         ],
       ),
@@ -179,9 +206,7 @@ class MiningContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFF5D755F),
-      ),
+      decoration: const BoxDecoration(color: Color(0xFF5D755F)),
       child: Stack(
         children: [
           // Background layers
@@ -198,34 +223,22 @@ class MiningContent extends StatelessWidget {
                   child: Stack(
                     children: [
                       // Central fox area
-                      CentralFoxArea(
-                        responsive: _responsive,
-                      ),
+                      CentralFoxArea(responsive: _responsive),
 
                       // Boost icons around the fox
-                      BoostArea(
-                        responsiveIcon: _responsiveIcon,
-                      ),
+                      BoostArea(responsiveIcon: _responsiveIcon),
 
                       // Pickaxe in the center
-                      PickaxeWidget(
-                        responsive: _responsive,
-                      ),
+                      PickaxeWidget(responsive: _responsive),
 
                       // Leaves row
-                      LeavesRow(
-                        responsive: _responsive,
-                      ),
+                      LeavesRow(responsive: _responsive),
 
                       // Locks grid
-                      LocksGrid(
-                        responsive: _responsive,
-                      ),
+                      LocksGrid(responsive: _responsive),
 
                       // Bottom bots with cat
-                      BottomSection(
-                        responsive: _responsive,
-                      ),
+                      BottomSection(responsive: _responsive),
                     ],
                   ),
                 ),
@@ -269,17 +282,14 @@ class BackgroundCanvas extends StatelessWidget {
 class CentralFoxArea extends StatelessWidget {
   final double Function(double) responsive;
 
-  const CentralFoxArea({
-    super.key,
-    required this.responsive,
-  });
+  const CentralFoxArea({super.key, required this.responsive});
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Align(
-          alignment: const Alignment(0.0, -0.43),
+          alignment: const Alignment(0.0, -0.51),
           child: Image.asset(
             'asset/centre/Vector-2.png',
             width: responsive(220),
@@ -288,7 +298,7 @@ class CentralFoxArea extends StatelessWidget {
           ),
         ),
         Align(
-          alignment: const Alignment(0.0, -0.45),
+          alignment: const Alignment(0.0, -0.53),
           child: Image.asset(
             'asset/centre/Vector-4.png',
             width: responsive(250),
@@ -307,10 +317,7 @@ class CentralFoxArea extends StatelessWidget {
 class BoostArea extends StatelessWidget {
   final double Function(double) responsiveIcon;
 
-  const BoostArea({
-    super.key,
-    required this.responsiveIcon,
-  });
+  const BoostArea({super.key, required this.responsiveIcon});
 
   @override
   Widget build(BuildContext context) {
@@ -318,7 +325,7 @@ class BoostArea extends StatelessWidget {
       children: [
         // Paws (top center)
         Align(
-          alignment: const Alignment(0.0, -0.78),
+          alignment: const Alignment(0.0, -0.84),
           child: Image.asset(
             'asset/paws.png',
             width: responsiveIcon(110),
@@ -329,7 +336,7 @@ class BoostArea extends StatelessWidget {
 
         // Handshake (top left)
         Align(
-          alignment: const Alignment(-0.85, -0.76),
+          alignment: const Alignment(-0.85, -0.80),
           child: Image.asset(
             'asset/handshake.png',
             width: responsiveIcon(180),
@@ -340,7 +347,7 @@ class BoostArea extends StatelessWidget {
 
         // Prize Cup (top right)
         Align(
-          alignment: const Alignment(0.65, -0.66),
+          alignment: const Alignment(0.65, -0.68),
           child: Image.asset(
             'asset/prize_cup.png',
             width: responsiveIcon(85),
@@ -351,7 +358,7 @@ class BoostArea extends StatelessWidget {
 
         // Wallet (middle left)
         Align(
-          alignment: const Alignment(-0.90, -0.43),
+          alignment: const Alignment(-0.85, -0.48),
           child: Image.asset(
             'asset/wallet.png',
             width: responsiveIcon(85),
@@ -362,7 +369,7 @@ class BoostArea extends StatelessWidget {
 
         // Power (middle right)
         Align(
-          alignment: const Alignment(0.90, -0.43),
+          alignment: const Alignment(0.85, -0.48),
           child: Image.asset(
             'asset/power.png',
             width: responsiveIcon(85),
@@ -373,7 +380,7 @@ class BoostArea extends StatelessWidget {
 
         // Boost 20% (lower left)
         Align(
-          alignment: const Alignment(-0.65, -0.20),
+          alignment: const Alignment(-0.6, -0.23),
           child: Image.asset(
             'asset/boost_20.png',
             width: responsiveIcon(90),
@@ -384,7 +391,7 @@ class BoostArea extends StatelessWidget {
 
         // Boost 30% (lower right)
         Align(
-          alignment: const Alignment(0.65, -0.20),
+          alignment: const Alignment(0.6, -0.23),
           child: Image.asset(
             'asset/boost_30.png',
             width: responsiveIcon(78),
@@ -403,15 +410,12 @@ class BoostArea extends StatelessWidget {
 class PickaxeWidget extends StatelessWidget {
   final double Function(double) responsive;
 
-  const PickaxeWidget({
-    super.key,
-    required this.responsive,
-  });
+  const PickaxeWidget({super.key, required this.responsive});
 
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: const Alignment(0.0, -0.01),
+      alignment: const Alignment(0.0, -0.07),
       child: Image.asset(
         'asset/pickaxe.png',
         width: responsive(120),
@@ -428,21 +432,18 @@ class PickaxeWidget extends StatelessWidget {
 class LeavesRow extends StatelessWidget {
   final double Function(double) responsive;
 
-  const LeavesRow({
-    super.key,
-    required this.responsive,
-  });
+  const LeavesRow({super.key, required this.responsive});
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Align(
-          alignment: const Alignment(-0.9, 0.30),
+          alignment: const Alignment(-0.85, 0.30),
           child: Image.asset(
             'asset/Leaf.png',
-            width: responsive(90),
-            height: responsive(90),
+            width: responsive(85),
+            height: responsive(85),
             fit: BoxFit.contain,
           ),
         ),
@@ -450,17 +451,17 @@ class LeavesRow extends StatelessWidget {
           alignment: const Alignment(0.0, 0.30),
           child: Image.asset(
             'asset/Leaf.png',
-            width: responsive(90),
-            height: responsive(90),
+            width: responsive(85),
+            height: responsive(85),
             fit: BoxFit.contain,
           ),
         ),
         Align(
-          alignment: const Alignment(0.9, 0.30),
+          alignment: const Alignment(0.85, 0.30),
           child: Image.asset(
             'asset/Leaf.png',
-            width: responsive(90),
-            height: responsive(90),
+            width: responsive(85),
+            height: responsive(85),
             fit: BoxFit.contain,
           ),
         ),
@@ -475,48 +476,45 @@ class LeavesRow extends StatelessWidget {
 class LocksGrid extends StatelessWidget {
   final double Function(double) responsive;
 
-  const LocksGrid({
-    super.key,
-    required this.responsive,
-  });
+  const LocksGrid({super.key, required this.responsive});
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Align(
-          alignment: const Alignment(-0.5, 0.18),
+          alignment: const Alignment(-0.45, 0.19),
           child: Image.asset(
             'asset/Lock.png',
-            width: responsive(105),
-            height: responsive(105),
+            width: responsive(100),
+            height: responsive(100),
             fit: BoxFit.contain,
           ),
         ),
         Align(
-          alignment: const Alignment(-0.5, 0.43),
+          alignment: const Alignment(-0.45, 0.42),
           child: Image.asset(
             'asset/Lock.png',
-            width: responsive(105),
-            height: responsive(105),
+            width: responsive(100),
+            height: responsive(100),
             fit: BoxFit.contain,
           ),
         ),
         Align(
-          alignment: const Alignment(0.5, 0.18),
+          alignment: const Alignment(0.45, 0.19),
           child: Image.asset(
             'asset/Lock.png',
-            width: responsive(105),
-            height: responsive(105),
+            width: responsive(100),
+            height: responsive(100),
             fit: BoxFit.contain,
           ),
         ),
         Align(
-          alignment: const Alignment(0.5, 0.43),
+          alignment: const Alignment(0.45, 0.42),
           child: Image.asset(
             'asset/Lock.png',
-            width: responsive(105),
-            height: responsive(105),
+            width: responsive(100),
+            height: responsive(100),
             fit: BoxFit.contain,
           ),
         ),
@@ -531,10 +529,7 @@ class LocksGrid extends StatelessWidget {
 class BottomSection extends StatelessWidget {
   final double Function(double) responsive;
 
-  const BottomSection({
-    super.key,
-    required this.responsive,
-  });
+  const BottomSection({super.key, required this.responsive});
 
   @override
   Widget build(BuildContext context) {
@@ -626,21 +621,18 @@ class BotWithShadow extends StatelessWidget {
 class CatWidget extends StatelessWidget {
   final double Function(double) responsive;
 
-  const CatWidget({
-    super.key,
-    required this.responsive,
-  });
+  const CatWidget({super.key, required this.responsive});
 
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         Align(
-          alignment: const Alignment(1.035, 1.0),
+          alignment: const Alignment(1.044, 1.0),
           child: Image.asset(
             'asset/cat_bg.png',
-            width: responsive(40),
-            height: responsive(40),
+            width: responsive(45),
+            height: responsive(26),
             fit: BoxFit.contain,
           ),
         ),
@@ -657,8 +649,8 @@ class CatWidget extends StatelessWidget {
           alignment: const Alignment(1.06, 1.043),
           child: Image.asset(
             'asset/Cat.png',
-            width: responsive(180),
-            height: responsive(185),
+            width: responsive(160),
+            height: responsive(155),
             fit: BoxFit.contain,
           ),
         ),
