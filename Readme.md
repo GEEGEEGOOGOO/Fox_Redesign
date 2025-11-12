@@ -8,7 +8,8 @@ A responsive Flutter implementation of a redesigned mining screen based on Figma
 ![Original Design](screenshots/before.png)
 
 ### After (Redesigned)
-![Redesigned Screen](screenshots/after.png)
+![Redesigned Screen](screenshots/after.png) 
+![Updated_Screen](screenshots/updated.png)
 
 ### Responsive Behavior
 ![Responsive Layout](screenshots/responsive.gif)
